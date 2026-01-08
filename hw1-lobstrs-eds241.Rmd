@@ -1,8 +1,8 @@
 ---
-title: "Assignment 1: California Spiny Lobster Abundance (*Panulirus Interruptus*)"
-subtitle: "Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County"
-author: "EDS 241"
-date: "1/8/2024 (Due 1/26)"
+title: "Assignment 1: "
+subtitle: "California Spiny Lobster (*Panulirus Interruptus*): Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County" 
+author: "EDS 241 / ESM 244 (**Due: 1/17**)"
+date: "1/8/26"
 output: 
     html_document:
       theme: flatly
@@ -18,7 +18,7 @@ knitr::opts_chunk$set(eval=FALSE, warning = FALSE, message = FALSE )
 
 ------------------------------------------------------------------------
 
-### Assignment instructions:
+### Assignment Instructions:
 
 -  Working with partners to troubleshoot code and concepts is encouraged! If you work with a partner, please list their name next to yours at the top of your assignment so Annie and I can easily see who collaborated. 
 
@@ -74,13 +74,13 @@ Let’s break it down step by step and see what the data reveals! 📊
 
 ------------------------------------------------------------------------
 
-Step 1: Anticipating potential sources of selection bias
+#### Step 1: Anticipating potential sources of selection bias
 
-**a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is centris paribus or whether selection bias is likely (be specific!).  
+**a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is ceteris paribus or whether selection bias is likely (be specific!).  
 
 ------------------------------------------------------------------------
 
-Step 2: Read & wrangle data
+#### Step 2: Read & wrangle data
 
 **a.** Read in the raw data. Name the data.frame (`df`) `rawdata`
 
@@ -126,7 +126,7 @@ spiny_counts <-
 
 ------------------------------------------------------------------------
 
-Step 3: Explore & visualize data
+#### Step 3: Explore & visualize data
 
 **a.** Take a look at the data! Get familiar with the data in each `df` format (`tidydata`, `spiny_counts`)
 
@@ -165,7 +165,7 @@ ggplot()
 
 ------------------------------------------------------------------------
 
-Step 4: OLS regression- building intuition
+#### Step 4: OLS regression- building intuition
 
 **a.** Start with a simple OLS estimator of lobster counts regressed on treatment. Use the function `summ()` from the [`jtools`](https://jtools.jacob-long.com/) package to print the OLS output
 
@@ -205,7 +205,7 @@ check_model(m1_ols, check = "pp_check")
 
 ------------------------------------------------------------------------
 
-Step 5: Fitting GLMs
+#### Step 5: Fitting GLMs
 
 **a.** Estimate a Poisson regression model using the `glm()` function
 
@@ -274,7 +274,7 @@ check_model(m3_nb)
 
 ------------------------------------------------------------------------
 
-Step 6: Compare models 
+#### Step 6: Compare models 
 
 **a.** Use the `export_summ()` function from the `jtools` package to look at the three regression models you fit side-by-side.
 
@@ -290,7 +290,7 @@ export_summs(# ADD MODELS
 
 ------------------------------------------------------------------------
 
-Step 7: Building intuition - fixed effects
+#### Step 7: Building intuition - fixed effects
 
 **a.** Create  new `df` with the `year` variable converted to a factor
 
@@ -349,7 +349,7 @@ plot_counts <-
 
 ------------------------------------------------------------------------
 
-Step 8: Reconsider causal identification assumptions
+#### Step 8: Reconsider causal identification assumptions
 
 a. Discuss whether you think `spillover effects` are likely in this research context (see Glossary of terms; https://docs.google.com/document/d/1RIudsVcYhWGpqC-Uftk9UTz3PIq6stVyEpT44EPNgpE/edit?usp=sharing)
 b. Explain why spillover is an issue for the identification of causal effects

@@ -1,12 +1,12 @@
-# HW1-LOBSTRS-EDS241
+# HW1-LOBSTRS
 
 ## Assignment 1: California Spiny Lobster Abundance (*Panulirus Interruptus*)
 
 ### Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County
 
-### "EDS 241"
+### "EDS 241 / ESM 244"
 
-### date: "1/8/2024 (Due 1/22)"
+### date: "1/8/2026 (Due 1/17)"
 
 ------------------------------------------------------------------------
 
