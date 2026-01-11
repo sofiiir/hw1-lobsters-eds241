@@ -2,7 +2,7 @@
 title: "Assignment 1"
 subtitle: "California Spiny Lobster (*Panulirus Interruptus*): Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County" 
 author: "EDS 241 / ESM 244 (**Due: 1/17**)"
-date: "1/8/26"
+date: "1/17/26"
 output: 
     html_document:
       theme: flatly
@@ -31,13 +31,13 @@ knitr::opts_chunk$set(eval=FALSE, warning = FALSE, message = FALSE )
 -  Your knitted presentation should meet the quality you'd submit to research colleagues or feel confident sharing publicly. Refer to the rubric for details about presentation standards.
 
 
-**Assignment submission (YOUR NAME):** ______________________________________
+**Assignment submission (Sofia Rodas):** ______________________________________
 
 
 ----------------------------------------------------------------------
 
 ```{r}
-
+# load in necessary libraries
 library(tidyverse)
 library(here)
 library(janitor)
@@ -75,21 +75,30 @@ Let’s break it down step by step and see what the data reveals! 📊
 
 #### Step 1: Anticipating potential sources of selection bias
 
-**a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is ceteris paribus or whether selection bias is likely (be specific!).  
+**a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is ceteris paribus or whether selection bias is likely (be specific!). 
+
+No, ceteris paribus is not achieved between the control sites (Arroyo Quemado, Carpenteria, and Mohawk) and the treatment sites (Naples, Isla Vista).The control sites do not provide a strong counter factual. The investigation is interested in analyzing the impact of MPAs on California Spiny Lobster (*Panulirus Interruptus*). In order to achieve ceteris paribus all other influencers would need to remain constant. However, this is impossible to do in a natural setting. The temperature of the ocean water, ocean currents, and predator population are all expamples of potential sources of dissimilarity between the control and treatment sites. 
 
 ------------------------------------------------------------------------
 
 #### Step 2: Read & wrangle data
 
 **a.** Read in the raw data from the "data" folder named `spiny_abundance_sb_18.csv`. Name the data.frame `rawdata`
+```{r}
+# read in data
+rawdata <- read_csv(here::here("data", "spiny_abundance_sb_18.csv"))
+```
 
 **b.** Use the function `clean_names()` from the `janitor` package
 
 ```{r}
 # HINT: check for coding of missing values (`na = "-99999"`)
 
-rawdata <- 
+# make all names lower_snake
+rawdata <-  janitor::clean_names(rawdata)
 
+# change any -99999 to NA
+rawdata$size_mm[rawdata$size_mm == -99999] <- NA
 ```
 
 **c.** Create a new `df` named `tidyata`. Using the variable `site` (reef location) create a new variable `reef` as a `factor` and add the following labels in the order listed (i.e., re-order the `levels`): 
@@ -98,17 +107,42 @@ rawdata <-
 
 ```{r}
 
-tidydata <- 
+tidydata <- rawdata |> 
+    mutate(reef = factor(rawdata$site, levels = c("AQUE", 
+                                                  "CARP", 
+                                                  "MOHK", 
+                                                  "IVEE", 
+                                                  "NAPL"),
+                                       labels = c( "Arroyo Quemado", 
+                                                   "Carpenteria", 
+                                                   "Mohawk", 
+                                                   "Isla Vista", 
+                                                   "Naples")))
     
 ```
 
 Create new `df` named `spiny_counts` 
+
+```{r}
+spiny_counts <- tidydata
+```
+
 
 **d.** Create a new variable `counts` to allow for an analysis of lobster counts where the unit-level of observation is the total number of observed lobsters per `site`, `year` and `transect`. 
 
 - Create a variable `mean_size` from the variable `size_mm`
 - NOTE: The variable `counts` should have values which are integers (whole numbers). 
 - Make sure to account for missing cases (`na`)!
+
+```{r}
+spiny_counts <- spiny_counts |> 
+    group_by(site, year, transect) |> 
+    mutate(mean_size = mean(size_mm, na.rm = TRUE)) |> 
+    ungroup()
+
+#spiny_counts <- as.integer(spiny_counts$count)
+```
+
 
 **e.** Create a new variable `mpa` with levels `MPA` and `non_MPA`. For our regression analysis create a numerical variable `treat` where MPA sites are coded `1` and non_MPA sites are coded `0`
 
