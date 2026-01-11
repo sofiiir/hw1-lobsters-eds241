@@ -47,6 +47,8 @@ library(jtools)
 library(gt)
 library(gtsummary)
 library(interactions) 
+library(ggbeeswarm)
+library(ggridges)
 
 ```
 
@@ -135,23 +137,33 @@ spiny_counts <- tidydata
 - Make sure to account for missing cases (`na`)!
 
 ```{r}
+#HINT(d): Use `group_by()` & `summarize()` to provide the total number of lobsters observed at each site-year-transect row-observation. 
+
+# new column addition: mean_size
 spiny_counts <- spiny_counts |> 
     group_by(site, year, transect) |> 
     mutate(mean_size = mean(size_mm, na.rm = TRUE)) |> 
     ungroup()
 
-#spiny_counts <- as.integer(spiny_counts$count)
+# change the data type of count to integer
+spiny_counts$count <- as.integer(spiny_counts$count)
 ```
 
 
 **e.** Create a new variable `mpa` with levels `MPA` and `non_MPA`. For our regression analysis create a numerical variable `treat` where MPA sites are coded `1` and non_MPA sites are coded `0`
 
 ```{r}
-#HINT(d): Use `group_by()` & `summarize()` to provide the total number of lobsters observed at each site-year-transect row-observation. 
-
 #HINT(e): Use `case_when()` to create the 3 new variable columns
 
-spiny_counts <- 
+spiny_counts <- spiny_counts |> 
+    mutate(mpa = case_when(
+    site == "IVEE" | site == "NAPL" ~ "mpa",
+    site == "AQUE" | site == "CARP" | site == "MOHK" ~ "non-mpa"
+)) |> 
+    mutate( treat = case_when(
+        mpa == "mpa" ~ 1,
+        mpa == "non-mpa" ~ 0
+    ))
 
 ```
 
@@ -175,20 +187,58 @@ spiny_counts <-
 Create plots displaying the distribution of lobster **counts**:
 
 1) grouped by reef site  
+```{r}
+# lobster counts by reef site
+spiny_counts |> 
+    group_by(site) |> 
+ggplot() +
+    geom_density_ridges(aes(x = count, y = site, color = site)) +
+    labs(x = "Count",
+         y = "Site",
+         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site") + 
+    scale_color_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "orange"))  
+   
+    
+```
+
 2) grouped by MPA status
+```{r}
+# lobster counts by mpa status
+spiny_counts |> 
+    group_by(mpa) |> 
+ggplot() +
+    geom_violin(aes(x = mpa, y = count, color = mpa)) +
+    labs(x = "MPA",
+         y = "Count",
+         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by MPA Status") +
+    scale_color_manual(values = c("#D77A61", "#5F7470"))
+    
+```
 3) grouped by year
+```{r}
+# lobster counts by year
+spiny_counts |> 
+    group_by(year) |> 
+ggplot() +
+    geom_jitter(aes(x = count, y = year, color = year)) +
+    labs(x = "Count",
+         y = "Site",
+         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site")  
+#    scale_color_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "#D77A61", "#1F1A38", "#F4F1BB"))
+    
+```
 
 Create a plot of lobster **size** :
 
 4) You choose the grouping variable(s)!
 
 ```{r}
-# plot 1: ....
-
-spiny_counts %>% 
-ggplot()
-    
+spiny_counts |> 
+    group_by(mpa) |> 
+    ggplot() +
+    geom_density(aes(x = size_mm, y = mpa))
 ```
+
 
 **c.** Compare means of the outcome by treatment group. Using the `tbl_summary()` function from the package [`gt_summary`](https://www.danieldsjoberg.com/gtsummary/articles/tbl_summary.html) 
 
