@@ -142,11 +142,11 @@ spiny_counts <- tidydata
 # new column addition: mean_size
 spiny_counts <- spiny_counts |> 
     group_by(site, year, transect) |> 
-    mutate(mean_size = mean(size_mm, na.rm = TRUE)) |> 
+    summarize(counts = sum(count, na.rm = TRUE), mean_size = mean(size_mm, na.rm = TRUE)) |> 
     ungroup()
 
 # change the data type of count to integer
-spiny_counts$count <- as.integer(spiny_counts$count)
+spiny_counts$counts <- as.integer(spiny_counts$counts)
 ```
 
 
