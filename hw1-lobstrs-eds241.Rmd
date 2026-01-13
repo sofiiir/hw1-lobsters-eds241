@@ -226,7 +226,7 @@ ggplot() +
     geom_beeswarm(aes(x = counts, y = year, color = year)) +
     labs(x = "Count",
          y = "Site",
-         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site")  
+         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Year")  
 #    scale_color_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "#D77A61", "#1F1A38", "#F4F1BB"))
     
 ```
