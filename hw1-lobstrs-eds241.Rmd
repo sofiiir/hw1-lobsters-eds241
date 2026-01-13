@@ -192,7 +192,9 @@ Create plots displaying the distribution of lobster **counts**:
 spiny_counts |> 
     group_by(site) |> 
 ggplot() +
-    geom_density_ridges(aes(x = count, y = site, color = site)) +
+    geom_density_ridges(aes(x = counts, y = site, color = site),
+                        quantile_lines=TRUE,
+                        quantile_fun = mean) +
     labs(x = "Count",
          y = "Site",
          title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site") + 
@@ -207,7 +209,8 @@ ggplot() +
 spiny_counts |> 
     group_by(mpa) |> 
 ggplot() +
-    geom_violin(aes(x = mpa, y = count, color = mpa)) +
+    geom_violin(aes(x = mpa, y = counts, color = mpa),
+                draw_quantiles = c(0.25, 0.5, 0.75)) +
     labs(x = "MPA",
          y = "Count",
          title = "California Spiny Lobster (*Panulirus Interruptus*) Count by MPA Status") +
@@ -220,7 +223,7 @@ ggplot() +
 spiny_counts |> 
     group_by(year) |> 
 ggplot() +
-    geom_jitter(aes(x = count, y = year, color = year)) +
+    geom_beeswarm(aes(x = counts, y = year, color = year)) +
     labs(x = "Count",
          y = "Site",
          title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site")  
@@ -236,7 +239,7 @@ Create a plot of lobster **size** :
 spiny_counts |> 
     group_by(mpa) |> 
     ggplot() +
-    geom_density(aes(x = size_mm, y = mpa))
+    geom_density(aes(x = mean_size, y = mpa))
 ```
 
 
