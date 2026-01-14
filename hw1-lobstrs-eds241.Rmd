@@ -249,6 +249,7 @@ spiny_counts |>
 
 ```{r}
 # USE: gt_summary::tbl_summary()
+gtsummary::tbl_summary(spiny_counts, by = treat)
 ```
 
 ------------------------------------------------------------------------
@@ -308,7 +309,9 @@ check_model(m1_ols, check = "pp_check")
 
 #HINT2: For the second glm() argument `family` use the following specification option `family = poisson(link = "log")`
 
-m2_pois <- 
+m2_pois <- glm(counts ~ treat, 
+               family = poisson(link = "log"),
+               data = spiny_counts)
 
 ```
 
@@ -342,7 +345,8 @@ library(MASS) ## NOTE: The `select()` function is masked. Use: `dplyr::select()`
 
 # NOTE: The `glm.nb()` function does not require a `family` argument
 
-m3_nb <- 
+m3_nb <- glm.nb(counts ~ treat,
+                data = spiny_counts)
 
 ```
 
@@ -374,7 +378,7 @@ check_model(m3_nb)
 
 ```{r}
 
-export_summs(# ADD MODELS
+export_summs(m1_ols, m2_pois, m3_nb,
              model.names = c("OLS","Poisson", "NB"),
              statistics = "none")
 
@@ -397,7 +401,7 @@ export_summs(# ADD MODELS
 
 ```{r}
 
-ff_counts <- spiny_counts %>% 
+ff_counts <- spiny_counts |> 
     mutate(year=as_factor(year))
     
 m5_fixedeffs <- glm.nb(
@@ -422,7 +426,7 @@ interact_plot(m5_fixedeffs, pred = year, modx = treat,
 # HINT: Change `outcome.scale` to "response" to convert y-axis scale to counts
 ```
 
-**g.** Using `ggplot()` create a plot in same style as the previous `interaction plot`, but displaying the original scale of the outcome variable (lobster counts). This type of plot is commonly used to show how the treatment effect changes across discrete time points (i.e., panel data).
+**g.** Using `ggplot()` create a plot in the same style as the previous `interaction plot`, but displaying the original scale of the outcome variable (lobster counts). This type of plot is commonly used to show how the treatment effect changes across discrete time points (i.e., panel data).
 
 The plot should have... 
 - `year` on the x-axis
@@ -434,9 +438,18 @@ The plot should have...
 # Hint 1: Group counts by `year` and `mpa` and calculate the `mean_count`
 # Hint 2: Convert variable `year` to a factor
 
-plot_counts <- 
+plot_counts <- ff_counts |> 
+    group_by(year, mpa) |> 
+    summarize(mean_count = mean(counts)) |> 
+    ggplot(aes(x = year, y = mean_count, color = mpa)) + 
+        geom_point()+
+        geom_line() + 
+    scale_color_manual(values = c("navy", "hotpink"))+
+    labs(x = "Year",
+         y = "Mean Counts",
+         title = "Mean Lobster Counts per Year: MPA versus Non-MPA Sites " )
 
-# plot_counts %>% ggplot() ...
+plot_counts
 ```
 
 ------------------------------------------------------------------------
