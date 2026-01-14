@@ -188,13 +188,14 @@ Create plots displaying the distribution of lobster **counts**:
 
 1) grouped by reef site  
 ```{r}
+
 # lobster counts by reef site
 spiny_counts |> 
     group_by(site) |> 
 ggplot() +
     geom_density_ridges(aes(x = counts, y = site, color = site),
                         quantile_lines=TRUE,
-                        quantile_fun = mean) +
+                        quantile_fun = median) +
     labs(x = "Count",
          y = "Site",
          title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site") + 
@@ -202,6 +203,7 @@ ggplot() +
    
     
 ```
+The density ridge plot shows that the data from all of the sites are positively skewed data. In other words there are outliers in the data with counts reaching into the hundreds in the sites. Mohawk has a number of observations between the counts of 100 and 200. Isla Vista counts taper off more slowly than the other sited with a greater conglomeration of counts between 50 and 100. Isla Vista counts also have some observations between 150 and 300. Carpenteria also has a few peaks between 75 and 125, between 150 and 200, and between 240 and 275. Since the data is skewed right, the descriptive statistic of choice is the median. It reduces the influence of the outliers such as would be present if the mean was the statistic shown. 
 
 2) grouped by MPA status
 ```{r}
@@ -260,7 +262,7 @@ spiny_counts |>
 ```{r}
 # NOTE: We will not evaluate/interpret model fit in this assignment (e.g., R-square)
 
-m1_ols <- 
+m1_ols <- lm(counts ~ treat, data = spiny_counts)
 
 summ(m1_ols, model.fit = FALSE) 
 
