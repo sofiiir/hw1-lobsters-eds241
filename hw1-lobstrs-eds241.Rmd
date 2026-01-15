@@ -142,7 +142,8 @@ spiny_counts <- tidydata
 # new column addition: mean_size
 spiny_counts <- spiny_counts |> 
     group_by(site, year, transect) |> 
-    summarize(counts = sum(count, na.rm = TRUE), mean_size = mean(size_mm, na.rm = TRUE)) |> 
+    summarize(counts = sum(count, na.rm = TRUE), 
+              mean_size = mean(size_mm, na.rm = TRUE)) |> 
     ungroup()
 
 # change the data type of count to integer
@@ -193,13 +194,13 @@ Create plots displaying the distribution of lobster **counts**:
 spiny_counts |> 
     group_by(site) |> 
 ggplot() +
-    geom_density_ridges(aes(x = counts, y = site, color = site),
+    geom_density_ridges(aes(x = counts, y = site, fill = site),
                         quantile_lines=TRUE,
                         quantile_fun = median) +
     labs(x = "Count",
          y = "Site",
          title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site") + 
-    scale_color_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "orange"))  
+    scale_fill_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "orange"))  
    
     
 ```
@@ -211,12 +212,12 @@ The density ridge plot shows that the data from all of the sites are positively 
 spiny_counts |> 
     group_by(mpa) |> 
 ggplot() +
-    geom_violin(aes(x = mpa, y = counts, color = mpa),
+    geom_violin(aes(x = mpa, y = counts, fill = mpa),
                 draw_quantiles = c(0.25, 0.5, 0.75)) +
     labs(x = "MPA",
          y = "Count",
          title = "California Spiny Lobster (*Panulirus Interruptus*) Count by MPA Status") +
-    scale_color_manual(values = c("#D77A61", "#5F7470"))
+    scale_fill_manual(values = c("#D77A61", "#5F7470"))
     
 ```
 3) grouped by year
@@ -241,14 +242,14 @@ Create a plot of lobster **size** :
 # create a new df to call to show mean on the plot
 mean_size <- spiny_counts |> 
     group_by(mpa) |> 
-    summarise(mean_mean_size = mean(mean_size))
+    summarise(mean_mean_size = mean(mean_size, na.rm = TRUE))
 
 spiny_counts |> 
-    filter(mean_size != NaN) |> 
+#    filter(mean_size != "NaN") |> 
     group_by(mpa) |> 
     ggplot(aes(x = mean_size)) +
     geom_histogram(aes(fill = mpa)) +
-    geom_vline(xintercept =  mean(mean_size, na.rm = TRUE)) +
+    geom_vline(xintercept =  70) +
 #     geom_vline(mapping = aes(xintercept = mean(mean_size))) +
 #   facet_wrap(~mpa) +
     scale_fill_manual(values = c("navy", "hotpink")) +
@@ -282,8 +283,8 @@ gtsummary::tbl_summary(spiny_counts, by = treat)
 m1_ols <- lm(counts ~ treat, data = spiny_counts)
 
 summ(m1_ols, model.fit = FALSE) 
-
 ```
+According to the OLS model, on average there are 22.73 lobsters in non-MPA sites. MPA sites have on average 5.36 more lobsters than non-MPA sites. 
 
 **c.** Check the model assumptions using the `check_model` function from the `performance` package
 
@@ -297,6 +298,7 @@ check_model(m1_ols,  check = "qq" )
 ```{r}
 check_model(m1_ols, check = "normality")
 ```
+The two plots above show that the residuals of the OLS model run on the lobster data does not follow what is expected for an OLS model that fits the data well. In other words a different model should be used for this data because there is a high dispersion of the residuals. 
 
 
 ```{r}
@@ -307,6 +309,7 @@ check_model(m1_ols, check = "homogeneity")
 ```{r}
 check_model(m1_ols, check = "pp_check")
 ```
+The blue line is the simulation of the model while the green line is the observed data. If the OLM linear model were a good fit for the the data the oberserved data line and the model-predicted data lines would follow a similar trend. The model check again shows that the OLM linear model is not the appropriate model for this data. 
 
 ------------------------------------------------------------------------
 
@@ -329,7 +332,10 @@ m2_pois <- glm(counts ~ treat,
                family = poisson(link = "log"),
                data = spiny_counts)
 
+summ(m2_pois)
+
 ```
+
 
 **e.** Check the model assumptions. Explain results.
 
@@ -364,6 +370,7 @@ library(MASS) ## NOTE: The `select()` function is masked. Use: `dplyr::select()`
 m3_nb <- glm.nb(counts ~ treat,
                 data = spiny_counts)
 
+summ(m3_nb)
 ```
 
 
