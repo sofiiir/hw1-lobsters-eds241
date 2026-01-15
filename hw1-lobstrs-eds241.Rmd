@@ -224,12 +224,12 @@ ggplot() +
 # lobster counts by year
 spiny_counts |> 
     group_by(year) |> 
+    mutate(year = factor(year)) |> 
 ggplot() +
     geom_beeswarm(aes(x = counts, y = year, color = year)) +
     labs(x = "Count",
          y = "Site",
-         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Year")  
-#    scale_color_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "#D77A61", "#1F1A38", "#F4F1BB"))
+         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Year") +      scale_color_manual(values = c("#640D14", "skyblue", "hotpink", "forestgreen", "#D77A61", "navy", "#F4F1BB"))
     
 ```
 
@@ -244,11 +244,13 @@ mean_size <- spiny_counts |>
     summarise(mean_mean_size = mean(mean_size))
 
 spiny_counts |> 
+    filter(mean_size != NaN) |> 
     group_by(mpa) |> 
     ggplot(aes(x = mean_size)) +
     geom_histogram(aes(fill = mpa)) +
-     geom_vline(mapping = aes(xintercept = mean(mean_size))) +
-    facet_wrap(~mpa) +
+    geom_vline(xintercept =  mean(mean_size, na.rm = TRUE)) +
+#     geom_vline(mapping = aes(xintercept = mean(mean_size))) +
+#   facet_wrap(~mpa) +
     scale_fill_manual(values = c("navy", "hotpink")) +
     # geom_vline(data = mean_size,
     #            aes(xintercept = mean_mean_size), size=1) +
