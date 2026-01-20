@@ -359,10 +359,10 @@ lobster_count <- round(exp(m2_pois$coef[1]), 2)
 mpa_treat <- exp(m2_pois$coef[2])
 
 # calculate percent change of treatment as an MPA site
-perc_lob_inc <- round((1 - mpa_treat) *100, 2)
+perc_lob_inc <- round((mpa_treat - 1) *100, 2)
 
 ```
-There are on average approximately `r lobster_count` in non-MPA sites according to the Poisson regression model. There is an approximate `r perc_lob_inc` change in the percentage of lobsters in MPA sites on average. 
+There are on average approximately `r lobster_count` in non-MPA sites according to the Poisson regression model. There is an approximate `r perc_lob_inc` increase in the percentage of lobsters in MPA sites on average. 
 
 Poisson models assume that variance is proportional to the mean. When the variance is larger than the mean the model is over dispersed. 
 
@@ -374,14 +374,17 @@ Poisson models assume that variance is proportional to the mean. When the varian
 ```{r}
 check_model(m2_pois)
 ```
+The posterior predictive check, the misspecified dispersion and zero-inflation check, and the distribution of quantile residuals do show that the observed data and the model-predicted data do not follow the same trends. The model does not accurately fit the data for these assumptions. The homogeneity of variance and influential observations are modeled well by the Poisson regression.
 
 ```{r}
 check_overdispersion(m2_pois)
 ```
+The dispersion ratio is 67.033 which is an extremely large value. The dispersion ratio should be equal to 1 which would indicate that the variance is equal to the mean. The observed data is over dispersed when utilizing this model. The over dispersion of the data indicates that a Poisson regrssion model is not a good fit for the data. 
 
 ```{r}
 check_zeroinflation(m2_pois)
 ```
+The observed zeros in this data are 27. This indicates that there are numerous zeros in the data. The Poisson model does not handle zeros well. The high number of zeros can be causing the overdispersion as well. 
 
 **g.** Fit a negative binomial model using the function glm.nb() from the package `MASS` and check model diagnostics 
 
@@ -403,22 +406,40 @@ m3_nb <- glm.nb(counts ~ treat,
 summ(m3_nb)
 ```
 
+Because the Negative Binomial calculates statistical values in the link space, the values must be taken out of the link space for applicable world interpretations. 
+```{r}
+# reverse the link space 
+nb_lobster_count <- round(exp(m3_nb$coef[1]), 2)
+nb_mpa_treat <- exp(m3_nb$coef[2])
+
+# calculate percent change of treatment as an MPA site
+nb_perc_lob_inc <- round((nb_mpa_treat -1) *100, 2)
+
+```
+There are on average approximately `r nb_lobster_count` in non-MPA sites according to the Poisson regression model. There is an approximate `r nb_perc_lob_inc` increase in the percentage of lobsters in MPA sites on average.
 
 ```{r}
 check_overdispersion(m3_nb)
 ```
 
+The over dispersion test is less close to 1. It is less than 5 and therefore within the range of good dispersion for the negative binomial model.
+
 ```{r}
 check_zeroinflation(m3_nb)
 ```
+The observed number of zeros is close to the predicted number of zeros meaning that the model accurately accounts for the zeros in its statistical analysis. The ratio is also near 1 indicating that the observed and predicted zero-inflations are close. 
 
 ```{r}
 check_predictions(m3_nb)
 ```
+The observed and predicted data follow the same trends in the posterior predictive check. The model accurately fits the data and shows the statistical trends. 
 
 ```{r}
 check_model(m3_nb)
 ```
+The homogeneity of variance, the influential observations, and the distribution of quantile residuals show the same trends between the observed and model-predicted data. The misspecified dispersion and zero-inflation assumption is not perfectly aligned between the predicted and observed data. The predicted data is within the confidence interval of the observed misspecified dispersion and zero-inflation data but does not perfectly follow the same values. This is an improvement from the Poisson model assumption checks.
+
+The negative binomial GLM model is a better fit for the data than the Poisson regression model in this case because of the large amount of zeros in the data. Negative binomial models account for over dispersion by adding an additional parameter. The Poisson model was utilized as an investigative model first since it is less complex.
 
 
 ------------------------------------------------------------------------
@@ -466,6 +487,22 @@ m5_fixedeffs <- glm.nb(
 
 summ(m5_fixedeffs, model.fit = FALSE)
 ```
+
+Because the Negative Binomial calculates statistical values in the link space, the values must be taken out of the link space for applicable world interpretations. 
+```{r}
+# reverse the link space 
+mix_lobster_count <- round(exp(m5_fixedeffs$coef[1]), 2)
+mix_mpa_treat <- exp(m5_fixedeffs$coef[2])
+
+# calculate percent change of treatment as an MPA site
+mix_perc_lob_inc <- round((mix_mpa_treat -1) *100, 2)
+
+```
+
+
+The intercept shows the average number of lobsters within non-MPA sites across all of the years. The treat variable shows the average percent change in lobsters for MPA sites. The individual years show the average percent change in lobsters for any given year for non-MPA sites. The treat and year interaction variables show the average percent change in lobsters for any given year for MPA sites.
+
+The main effect of treat is negative because the values date back to the creation of the MPAs. MPAs are protection areas created when ecosystems are in decline. The MPAs were likely created where the lobster populations were the lowest hence the low values are distorting the true effects of MPA site creation. 
 
 **e.** Look at the model predictions: Use the `interact_plot()` function from package `interactions` to plot mean predictions by year and treatment status. 
 
