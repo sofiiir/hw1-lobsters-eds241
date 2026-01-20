@@ -9,7 +9,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(eval=FALSE, warning = FALSE, message = FALSE )
+knitr::opts_chunk$set(eval=TRUE, warning = FALSE, message = FALSE )
 ```
 
 ------------------------------------------------------------------------
@@ -62,13 +62,13 @@ library(ggridges)
 
 ### **Introduction**
 
-You're about to dive into some deep data collected from five reef sites in Santa Barbara County, all about the abundance of California spiny lobsters! 🦞 Data was gathered by divers annually from 2012 to 2018 across Naples, Mohawk, Isla Vista, Carpinteria, and Arroyo Quemado reefs.
+You're about to dive into some deep data collected from five reef sites in Santa Barbara County, all about the abundance of California spiny lobsters!  Data was gathered by divers annually from 2012 to 2018 across Naples, Mohawk, Isla Vista, Carpinteria, and Arroyo Quemado reefs.
 
 Why lobsters? Well, this sample provides an opportunity to evaluate the impact of Marine Protected Areas (MPAs) established on January 1, 2012 (Reed, 2019). Of these five reefs, Naples, and Isla Vista are MPAs, while the other three are not protected (non-MPAs). Comparing lobster health between these protected and non-protected areas gives us the chance to study how commercial and recreational fishing might impact these ecosystems.
 
 We will consider the MPA sites the `treatment` group and use regression methods to explore whether protecting these reefs really makes a difference compared to non-MPA sites (our control group). In this assignment, we’ll think deeply about which causal inference assumptions hold up under the research design and identify where they fall short. 
 
-Let’s break it down step by step and see what the data reveals! 📊
+Let’s break it down step by step and see what the data reveals! 
 
 ![](figures/map-5reefs.png)
 
@@ -108,7 +108,7 @@ rawdata$size_mm[rawdata$size_mm == -99999] <- NA
     "Arroyo Quemado", "Carpenteria", "Mohawk", "Isla Vista",  "Naples"
 
 ```{r}
-
+# factor the reef locations
 tidydata <- rawdata |> 
     mutate(reef = factor(rawdata$site, levels = c("AQUE", 
                                                   "CARP", 
@@ -126,6 +126,7 @@ tidydata <- rawdata |>
 Create new `df` named `spiny_counts` 
 
 ```{r}
+# create spiny_counts df
 spiny_counts <- tidydata
 ```
 
@@ -156,6 +157,7 @@ spiny_counts$counts <- as.integer(spiny_counts$counts)
 ```{r}
 #HINT(e): Use `case_when()` to create the 3 new variable columns
 
+# add a mpa column
 spiny_counts <- spiny_counts |> 
     mutate(mpa = case_when(
     site == "IVEE" | site == "NAPL" ~ "mpa",
@@ -199,7 +201,7 @@ ggplot() +
                         quantile_fun = median) +
     labs(x = "Count",
          y = "Site",
-         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Site") + 
+         title = "California Spiny Lobster Count by Site") + 
     scale_fill_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "orange"))  
    
     
@@ -216,10 +218,12 @@ ggplot() +
                 draw_quantiles = c(0.25, 0.5, 0.75)) +
     labs(x = "MPA",
          y = "Count",
-         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by MPA Status") +
+         title = "California Spiny Lobster Count by MPA Status") +
     scale_fill_manual(values = c("#D77A61", "#5F7470"))
     
 ```
+The violin plot above shows that non-MPA sites have more counts that are below approximately 25 lobsters. Many MPA sites have low counts as well however, the 75 percentile mark is located at a higher count for MPA sites. This signifies that proportionally, MPA sites have a higher chance of having more lobsters than non-MPA sites. 
+
 3) grouped by year
 ```{r}
 # lobster counts by year
@@ -227,12 +231,22 @@ spiny_counts |>
     group_by(year) |> 
     mutate(year = factor(year)) |> 
 ggplot() +
+    geom_boxplot(aes(x = counts, y = year, color = year),
+                 outlier.shape = NA) +
     geom_beeswarm(aes(x = counts, y = year, color = year)) +
     labs(x = "Count",
          y = "Site",
-         title = "California Spiny Lobster (*Panulirus Interruptus*) Count by Year") +      scale_color_manual(values = c("#640D14", "skyblue", "hotpink", "forestgreen", "#D77A61", "navy", "#F4F1BB"))
+         title = "California Spiny Lobster Count by Year") +      
+    scale_color_manual(values = c("#640D14", 
+                                  "skyblue", 
+                                  "black", 
+                                  "forestgreen", 
+                                  "#D77A61", 
+                                  "navy", 
+                                  "hotpink"))
     
 ```
+The boxplot and beeswarm figure above shows that lobster counts increase as more time passes since the creation of MPAs. This figure shows that lobster populations increase fairly steadily from 2012 to 2018. 2016 is an outlier year that has fewer lobsters than 2015 as shown by the boxplot. Though more analysis is necessary, the creation of MPAs appears to positively impact lobster populations. 
 
 Create a plot of lobster **size** :
 
@@ -244,23 +258,25 @@ mean_size <- spiny_counts |>
     group_by(mpa) |> 
     summarise(mean_mean_size = mean(mean_size, na.rm = TRUE))
 
+# assign mean to variables 
+mpa_mean <- mean_size$mean_mean_size[1]
+non_mpa_mean <- mean_size$mean_mean_size[2]
+
+# plot MPA and non-MPA zones mean-size in a histogram
 spiny_counts |> 
-#    filter(mean_size != "NaN") |> 
     group_by(mpa) |> 
-    ggplot(aes(x = mean_size)) +
-    geom_histogram(aes(fill = mpa)) +
-    geom_vline(xintercept =  70) +
-#     geom_vline(mapping = aes(xintercept = mean(mean_size))) +
-#   facet_wrap(~mpa) +
+    ggplot(aes(x = mean_size, 
+                fill = mpa)) +
+    geom_histogram(alpha = 0.5) +
     scale_fill_manual(values = c("navy", "hotpink")) +
-    # geom_vline(data = mean_size,
-    #            aes(xintercept = mean_mean_size), size=1) +
-    labs(x = "Count",
-         y = "Mean Size", 
+    geom_vline(xintercept = c(mpa_mean, non_mpa_mean),
+               color = c("navy", "hotpink")) +
+    labs(y = "Count",
+         x = "Mean Size",
          title = "Mean Lobster Size in MPA and Non-MPA Zones")
 
 ```
-
+The histogram above shows that MPA sites have a larger mean lobster size than non-MPA sites. The histogram also shows that there are more lobsters counted in MPA sites than non-MPA sites. 
 
 **c.** Compare means of the outcome by treatment group. Using the `tbl_summary()` function from the package [`gt_summary`](https://www.danieldsjoberg.com/gtsummary/articles/tbl_summary.html) 
 
@@ -284,7 +300,7 @@ m1_ols <- lm(counts ~ treat, data = spiny_counts)
 
 summ(m1_ols, model.fit = FALSE) 
 ```
-According to the OLS model, on average there are 22.73 lobsters in non-MPA sites. MPA sites have on average 5.36 more lobsters than non-MPA sites. 
+According to the OLS linear regression model, on average there are 22.73 lobsters in non-MPA sites. MPA sites have on average 5.36 more lobsters than non-MPA sites. Though the OLS linear regression model is convenient because the estimates for the intercept and coefficients are in counts of lobsters, it is impossible to have fractions of lobsters and may not be the best statistical model to analyze the difference in lobster counts between MPA and non-MPA sites. 
 
 **c.** Check the model assumptions using the `check_model` function from the `performance` package
 
@@ -298,18 +314,19 @@ check_model(m1_ols,  check = "qq" )
 ```{r}
 check_model(m1_ols, check = "normality")
 ```
-The two plots above show that the residuals of the OLS model run on the lobster data does not follow what is expected for an OLS model that fits the data well. In other words a different model should be used for this data because there is a high dispersion of the residuals. 
+The two plots above show that the residuals of the OLS linear regression model run on the lobster data does not follow what is expected for an OLS model that fits the data well. In other words a different model should be used for this data because there is a high dispersion of the residuals. 
 
 
 ```{r}
 check_model(m1_ols, check = "homogeneity")
 ```
+The reference line in the "Homogeneity of Variance" is not shown on the plot above. The homogeneity of variance should be flat but the model fit on lobster counts is curved. The variance is not homogenous as the variance values follow the curved line shown above. This again shows that the OLS linear regression model is not a good fit for the lobster count data. A model that does not make rely on the assumption of homogeneity of variance should be utilized to analyze lobster count between MPA and non-MPA sites.  
 
 
 ```{r}
 check_model(m1_ols, check = "pp_check")
 ```
-The blue line is the simulation of the model while the green line is the observed data. If the OLM linear model were a good fit for the the data the oberserved data line and the model-predicted data lines would follow a similar trend. The model check again shows that the OLM linear model is not the appropriate model for this data. 
+The blue line is the simulation of the model while the green line is the observed data. The data is simulated numerous times showing hance the many blue lines on the graph above. The observed data is the outlier of all of the density curves. If the OLM linear model were a good fit for the the data the observed data line and the model-predicted data lines would follow a similar trend. The model check again shows that the OLM linear model is not the appropriate model for this data. 
 
 ------------------------------------------------------------------------
 
@@ -335,6 +352,19 @@ m2_pois <- glm(counts ~ treat,
 summ(m2_pois)
 
 ```
+Because the Poisson regression model calculates statistical values in the link space, the values must be taken out of the link space for applicable world interpretations. 
+```{r}
+# reverse the link space 
+lobster_count <- round(exp(m2_pois$coef[1]), 2)
+mpa_treat <- exp(m2_pois$coef[2])
+
+# calculate percent change of treatment as an MPA site
+perc_lob_inc <- round((1 - mpa_treat) *100, 2)
+
+```
+There are on average approximately `r lobster_count` in non-MPA sites according to the Poisson regression model. There is an approximate `r perc_lob_inc` change in the percentage of lobsters in MPA sites on average. 
+
+Poisson models assume that variance is proportional to the mean. When the variance is larger than the mean the model is over dispersed. 
 
 
 **e.** Check the model assumptions. Explain results.
