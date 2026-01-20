@@ -374,7 +374,7 @@ Poisson models assume that variance is proportional to the mean. When the varian
 ```{r}
 check_model(m2_pois)
 ```
-The posterior predictive check, the misspecified dispersion and zero-inflation check, and the distribution of quantile residuals do show that the observed data and the model-predicted data do not follow the same trends. The model does not accurately fit the data for these assumptions. The homogeneity of variance and influential observations are modeled well by the Poisson regression.
+The posterior predictive check, the mis-specified dispersion and zero-inflation check, and the distribution of quantile residuals do show that the observed data and the model-predicted data do not follow the same trends. The model does not accurately fit the data for these assumptions. The homogeneity of variance and influential observations are modeled well by the Poisson regression.
 
 ```{r}
 check_overdispersion(m2_pois)
@@ -458,6 +458,8 @@ export_summs(m1_ols, m2_pois, m3_nb,
 
 ```
 The values from the OLS model is in lobster counts while the values in the Poisson and Negative Binomial models are in the link space. These values cannot be easily compared across the three types of models. Transformations are required to make all of these values into lobster counts. 
+
+
 ------------------------------------------------------------------------
 
 #### Step 7: Building intuition - fixed effects
@@ -511,7 +513,7 @@ The main effect of treat is negative because the values date back to the creatio
 ```{r}
 
 interact_plot(m5_fixedeffs, pred = year, modx = treat,
-              outcome.scale = "link") # NOTE: y-axis on log-scale
+              outcome.scale = "response") # NOTE: y-axis on log-scale
 
 # HINT: Change `outcome.scale` to "response" to convert y-axis scale to counts
 ```
