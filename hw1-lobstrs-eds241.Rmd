@@ -251,7 +251,8 @@ ggplot() +
     geom_beeswarm(aes(x = counts, y = year, color = year)) +
     labs(x = "Count",
          y = "Site",
-         title = "California Spiny Lobster Count by Year") +      
+         title = "California Spiny Lobster Count by Year",
+         subtitle = "Boxplots indicate quartile ranges of data observations") +      
     scale_color_manual(values = c("#640D14", 
                                   "skyblue", 
                                   "black", 
