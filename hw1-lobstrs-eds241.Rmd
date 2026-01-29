@@ -76,7 +76,7 @@ Let’s break it down step by step and see what the data reveals!
 
 **a.** Do the control sites (Arroyo Quemado, Carpenteria, and Mohawk) provide a strong counterfactual for our treatment sites (Naples, Isla Vista)? Write a paragraph making a case for why this comparison is ceteris paribus or whether selection bias is likely (be specific!).
 
-No, ceteris paribus is not achieved between the control sites (Arroyo Quemado, Carpenteria, and Mohawk) and the treatment sites (Naples, Isla Vista).The control sites do not provide a strong counter factual. The investigation is interested in analyzing the impact of MPAs on California Spiny Lobster (*Panulirus Interruptus*). In order to achieve ceteris paribus all other influencers would need to remain constant. However, this is impossible to do in a natural setting. The temperature of the ocean water, ocean currents, fishing pressure, and predator population are all examples of potential sources of dissimilarity between the control and treatment sites.
+No, ceteris paribus is not achieved between the control sites (Arroyo Quemado, Carpenteria, and Mohawk) and the treatment sites (Naples, Isla Vista).The control sites do not provide a strong counter factual. The investigation is interested in analyzing the impact of MPAs on California Spiny Lobster (*Panulirus Interruptus*). In order to achieve ceteris paribus all other influencers would need to remain constant. However, this is impossible to do in a natural setting. The temperature of the ocean water, ocean currents, fishing pressure, and predator population are all examples of potential sources of dissimilarity between the control and treatment sites. Additionally, MPA sites were not randomly assigned. MPA site locations were purposefully selected to be in areas that would further conservation efforts. 
 
 ------------------------------------------------------------------------
 
@@ -202,7 +202,13 @@ ggplot() +
     labs(x = "Count",
          y = "Site",
          title = "California Spiny Lobster Count by Reef Site") + 
-    scale_fill_manual(values = c("red", "skyblue", "hotpink", "forestgreen", "orange"))  
+    scale_fill_manual(values = c("red", 
+                                 "skyblue", 
+                                 "hotpink", 
+                                 "forestgreen", 
+                                 "orange")) +
+    theme_minimal() +
+    theme(legend.position = "none")
 ```
 
 Figure 1, the density ridge plot shows that the data from all of the sites are positively skewed data. In other words there are outliers in the data with lobster counts reaching into the hundreds. Mohawk has a number of observations between the counts of 100 and 200. Isla Vista counts taper off more slowly than the other sites with a greater conglomeration of counts between 50 and 100. Isla Vista counts also have some observations between 150 and 300. Carpenteria has a few peaks between 75 and 125, between 150 and 200, and between 240 and 275. Since the data is skewed right, the descriptive statistic of choice is the median. It reduces the influence of the outliers such as would be present if the statistic shown were the mean. Mohawk (non-MPA) and Isla Vista (MPA) have the highest medians.
@@ -221,7 +227,10 @@ ggplot() +
     labs(x = "MPA",
          y = "Count",
          title = "California Spiny Lobster Count by MPA Status") +
-    scale_fill_manual(values = c("#D77A61", "#5F7470"))
+    scale_fill_manual(values = c("#D77A61", 
+                                 "#5F7470"),
+                      guide = "none") +
+    theme_minimal()
     
 ```
 
@@ -249,7 +258,10 @@ ggplot() +
                                   "forestgreen", 
                                   "#D77A61", 
                                   "navy", 
-                                  "hotpink"))
+                                  "hotpink"), 
+                       guide = "none"
+                       ) +
+    theme_minimal()
     
 ```
 
@@ -282,7 +294,9 @@ spiny_counts |>
                color = c("navy", "hotpink")) +
     labs(y = "Count",
          x = "Mean Size",
-         title = "Mean Lobster Size in MPA and Non-MPA Zones")
+         title = "Mean Lobster Size in MPA and Non-MPA Zones",
+         subtitle = "Vertical line signifies mean for the group based on color") +
+    theme_minimal()
 
 ```
 
@@ -486,7 +500,9 @@ mpa_lobster_count <- 22.73 * 0.23
 
 The values from the OLS model is in lobster counts while the values in the Poisson and Negative Binomial models are in the link space. These values cannot be easily compared across the three types of models. Transformations are required to make all of these values into lobster counts.
 
-As described above, the values for the Poisson regression model and negative binomial model are the same. The average number of lobsters in non-MPA sites is equal across the three models. However, the Poisson regression model and the negative binomial model have slightly lower with an on average 5.23 lobster increase for MPA sites. All of these models provide relatively similar lobster counts once translated into the response space. 
+As described above, the values for the Poisson regression model and negative binomial model are the same. The average number of lobsters in non-MPA sites is equal across the three models. However, the Poisson regression model and the negative binomial model have slightly lower average increase of 5.23 lobsters for MPA sites compared to non-MPA sites. All of these models provide relatively similar lobster counts once translated into the response space. 
+
+All of the models have significant p-values for the intercept with p-values < 0.0001. Only the Poisson regression model has a significance for the treat covariate.
 
 ------------------------------------------------------------------------
 
@@ -587,7 +603,7 @@ d.  Discuss the following causal inference assumptions in the context of the MPA
 
     1)  SUTVA: Stable Unit Treatment Value assumption. 
     
-SUTVA cannot be assumed in the context of MPA treatment sites. As discussed above, there is spillover in the lobster counts between the MPA and non-MPA sites. 
+SUTVA cannot be assumed in the context of MPA treatment sites. As discussed above, there is spillover in the lobster counts between the MPA and non-MPA sites meaning that there is a violation of the "no inference" assumption. The second SUTVA assumption, "no hidden variation" is met. All of the MPA sites have the same treatment. In theory no differences exist between the treatment of all of the MPA sites. 
 
     2)  Exogeneity assumption. 
     
