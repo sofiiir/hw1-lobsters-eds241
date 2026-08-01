@@ -4,7 +4,7 @@
 
 ### Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County
 
-### date: "1/8/2026 (Due 1/17)"
+### date: 1/17/2026 
 
 ------------------------------------------------------------------------
 
