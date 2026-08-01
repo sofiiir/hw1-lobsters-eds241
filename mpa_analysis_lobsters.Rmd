@@ -1,11 +1,8 @@
 ---
-title: "Assignment 1"
-subtitle: "California Spiny Lobster (*Panulirus Interruptus*): Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County" 
-author: "EDS 241 / ESM 244 (**Due: 1/20**)"
-date: "1/20/26"
-output: 
-    html_document:
-      theme: flatly
+title: "California Spiny Lobster (*Panulirus Interruptus*): Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County" 
+date: "1/17/26"
+massage: false
+warning: false
 ---
 
 ```{r setup, include=FALSE}
@@ -16,23 +13,6 @@ knitr::opts_chunk$set(eval=TRUE, warning = FALSE, message = FALSE )
 
 ![](figures/spiny2.jpg)
 
-------------------------------------------------------------------------
-
-### Assignment Instructions:
-
--   Working with partners to troubleshoot code and concepts is encouraged! If you work with a partner, please list their name next to yours at the top of your assignment so Annie and I can easily see who collaborated.
-
--   All written responses must be written independently (**in your own words**).
-
--   Please follow the question prompts carefully and include only the information each question asks in your submitted responses.
-
--   Submit both your knitted document and the associated `RMarkdown` or `Quarto` file.
-
--   Your knitted presentation should meet the quality you'd submit to research colleagues or feel confident sharing publicly. Refer to the rubric for details about presentation standards.
-
-**Assignment submission: Sofia Rodas** 
-
-------------------------------------------------------------------------
 
 ```{r}
 # load in necessary libraries
@@ -610,16 +590,5 @@ SUTVA cannot be assumed in the context of MPA treatment sites. As discussed abov
     
 Exogeneity cannot be assumed in the context of MPA treatment sites. Though the increase in lobster counts in MPA sites is likely a result of the MPA site creations, the locations that were selected for MPA sites were not randomly assigned. Those areas selected to be MPA sites may have other characteristics that are causing the increased lobster count outcome. 
 
-------------------------------------------------------------------------
-
-# EXTRA CREDIT
-
-> Use the recent lobster abundance data with observations collected up until 2024 (`extracredit_sblobstrs24.csv`) to run an analysis evaluating the effect of MPA status on lobster counts using the same focal variables.
-
-a.  Create a new script for the analysis on the updated data
-b.  Run at least 3 regression models & assess model diagnostics
-c.  Compare and contrast results with the analysis from the 2012-2018 data sample (\~ 2 paragraphs)
-
-------------------------------------------------------------------------
 
 ![](figures/spiny1.png)
