@@ -1,6 +1,6 @@
-# HW1-LOBSTRS
+# Lobsters between MPA and Non-MPA Sites
 
-## Assignment 1: California Spiny Lobster Abundance (*Panulirus Interruptus*)
+## California Spiny Lobster Abundance (*Panulirus Interruptus*)
 
 ### Assessing the Impact of Marine Protected Areas (MPAs) at 5 Reef Sites in Santa Barbara County
 
@@ -12,19 +12,6 @@
 
 ![](figures/spiny1.png)
 
-------------------------------------------------------------------------
-
-### Assignment instructions:
-
--  Working with partners to troubleshoot code and concepts is encouraged! If you work with a partner, please list their name next to yours at the top of your assignment so Annie and I can easily see who collaborated. 
-
--  All written responses must be written independently (**in your own words**). 
-
--  Please follow the question prompts carefully and include only the information each question asks in your submitted responses.
-
--  Submit both your knitted document and the associated `RMarkdown` or `Quarto` file. 
-
--  Your knitted presentation should meet the quality you'd submit to research colleagues or feel confident sharing publicly. Refer to the rubric for details about presentation standards.
 
 ------------------------------------------------------------------------
 
@@ -36,7 +23,7 @@ Reed D. 2019. SBC LTER: Reef: Abundance, size and fishing effort for California 
 
 ### Introduction
 
-You're about to dive into some deep data collected from five reef sites in Santa Barbara County, all about the abundance of California spiny lobsters! 🦞 Data was gathered by divers annually from 2012 to 2018 across Naples, Mohawk, Isla Vista, Carpinteria, and Arroyo Quemado reefs.
+Diving into data collected from five reef sites in Santa Barbara County, all about the abundance of California spiny lobsters! 🦞 Data was gathered by divers annually from 2012 to 2018 across Naples, Mohawk, Isla Vista, Carpinteria, and Arroyo Quemado reefs.
 
 Why lobsters? Well, this sample provides an opportunity to evaluate the impact of Marine Protected Areas (MPAs) established on January 1, 2012 (Reed, 2019). Of these five reefs, Naples, and Isla Vista are MPAs, while the other three are not protected (non-MPAs). Comparing lobster health between these protected and non-protected areas gives us the chance to study how commercial and recreational fishing might impact these ecosystems.
 
